@@ -17,6 +17,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Eventify Event Management API" });
 });
 
+// Routes
+import authRoutes from "./routes/auth.routes.js";
+app.use("/api/auth", authRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
