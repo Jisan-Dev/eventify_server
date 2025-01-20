@@ -30,13 +30,13 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     // Find user
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password -__v");
     if (!user) {
       return res.status(400).json({ message: "User not found!" });
     }
 
     // Compare passwords
-    const match = await User.comparePassword(password);
+    const match = await user.comparePassword(password);
     if (!match) {
       return res.status(400).json({ message: "Invalid credentials!" });
     }
