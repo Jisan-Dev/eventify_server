@@ -13,7 +13,7 @@ import ConnectDb from "./config/ConnectDb.js";
 ConnectDb();
 
 // Basic route
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.json({ message: "Welcome to Eventify Event Management API" });
 });
 

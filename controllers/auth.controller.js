@@ -24,3 +24,28 @@ export const register = async (req, res) => {
     res.status(500).json({ message: "Error registering user!", error: error.message });
   }
 };
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found!" });
+    }
+
+    // Compare passwords
+    const match = await User.comparePassword(password);
+    if (!match) {
+      return res.status(400).json({ message: "Invalid credentials!" });
+    }
+
+    // generate jwt token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    res.status(200).json({ message: "User logged in successfully!", token, user });
+  } catch (error) {
+    console.log("Error logging in user", error);
+    res.status(500).json({ message: "Error logging in user", error: error.message });
+  }
+};
