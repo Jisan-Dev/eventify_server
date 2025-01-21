@@ -49,3 +49,27 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Error logging in user", error: error.message });
   }
 };
+
+export const guestLogin = async (req, res) => {
+  try {
+    // Generate a random user for guest role
+    const guestUsername = `guest_${Math.random().toString(36).substring(7)}`;
+    const guestEmail = `${guestUsername}@guest.com`;
+    const guestPassword = Math.random().toString(36);
+
+    const guest = new User({
+      username: guestUsername,
+      email: guestEmail,
+      password: guestPassword,
+      role: "guest",
+    });
+
+    await guest.save();
+
+    const token = jwt.sign({ userId: guest._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    res.status(201).json({ message: "Guest login successful!", token, user: guest });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error creating guest account!", error: error.message });
+  }
+};
