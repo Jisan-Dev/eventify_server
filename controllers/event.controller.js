@@ -63,7 +63,7 @@ export const attendEvent = async (req, res) => {
     // event.attendees.push(req.user._id)
     // await event.save()
 
-    // If we need to return the updated document with response
+    // If we need to return the updated document with response otherwise we can do the above
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $push: { attendees: req.user._id } }, { new: true }).populate("creator", "username");
 
     // emit real-time update
@@ -73,6 +73,20 @@ export const attendEvent = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error registering for the event!", error: error.message });
+  }
+};
+
+export const cancelAttend = async (req, res) => {
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $pull: { attendees: req.user._id } }, { new: true });
+
+    // emit real-time update
+    io.emit("eventUpdated", updatedEvent);
+
+    res.status(200).json({ message: "Successfully cancelled the registration for the event", event: updatedEvent });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "error cancelling the registration for the event!", error: error.message });
   }
 };
 
