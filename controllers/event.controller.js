@@ -64,7 +64,7 @@ export const attendEvent = async (req, res) => {
     // await event.save()
 
     // If we need to return the updated document with response
-    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $push: { attendees: req.user._id } }, { new: true });
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $push: { attendees: req.user._id } }, { new: true }).populate("creator", "username");
 
     // emit real-time update
     io.emit("eventUpdated", updatedEvent);
