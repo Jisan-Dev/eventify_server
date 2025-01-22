@@ -20,3 +20,21 @@ export const createEvent = async (req, res) => {
     res.status(500).json({ message: "Error creating the event!", error: error.message });
   }
 };
+
+export const getAllEvents = async (req, res) => {
+  try {
+    const { category, date } = req.query;
+    let query = {};
+
+    // apply filters if provided
+    if (category) query.category = category;
+    if (date) query.date = { $gte: new Date(date) };
+
+    const events = await Event.find(query).populate("creator", "username").populate("attendees", "username").sort({ date: 1 });
+
+    res.status(200).json({ events, count: events.length });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error fetching all events!", error: error.message });
+  }
+};
