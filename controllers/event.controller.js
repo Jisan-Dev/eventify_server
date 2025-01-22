@@ -96,3 +96,23 @@ export const deleteEvent = async (req, res) => {
     res.status(500).json({ message: "Error deleting the event!", error: error.message });
   }
 };
+
+export const updateEvent = async (req, res) => {
+  try {
+    let event = await Event.findById(req.params.id);
+    // Check if user is the creator or admin
+    if (event.creator.toString() !== req.user._id.toString() && req.user.role.toString() !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this event" });
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }).populate("creator", "username").populate("attendees", "username");
+
+    // emit real-time update
+    io.emit("eventUpdated", updatedEvent);
+
+    res.status(200).json({ message: "Event updated successfully!", event: updatedEvent });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error updating the event!", error: error.message });
+  }
+};

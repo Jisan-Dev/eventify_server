@@ -1,5 +1,5 @@
 import express from "express";
-import { attendEvent, createEvent, deleteEvent, getAllEvents, getEventById } from "../controllers/event.controller.js";
+import { attendEvent, createEvent, deleteEvent, getAllEvents, getEventById, updateEvent } from "../controllers/event.controller.js";
 import { authenticateUser, isNotGuest } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
@@ -11,5 +11,6 @@ router.get("/:id", authenticateUser, getEventById);
 router.post("/", authenticateUser, isNotGuest, createEvent);
 router.post("/:id/attend", authenticateUser, isNotGuest, attendEvent);
 router.delete("/:id", authenticateUser, isNotGuest, deleteEvent);
+router.put("/:id", authenticateUser, isNotGuest, updateEvent);
 
 export default router;
