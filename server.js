@@ -6,7 +6,7 @@ import { Server } from "socket.io";
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
+export const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -42,6 +42,8 @@ app.get("/", (_req, res) => {
 // Routes
 import authRoutes from "./routes/auth.routes.js";
 app.use("/api/auth", authRoutes);
+import eventRoutes from "./routes/event.routes.js";
+app.use("/api/events", eventRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
