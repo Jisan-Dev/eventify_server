@@ -66,6 +66,9 @@ export const attendEvent = async (req, res) => {
     // If we need to return the updated document with response
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $push: { attendees: req.user._id } }, { new: true });
 
+    // emit real-time update
+    io.emit("eventUpdated", updatedEvent);
+
     res.status(201).json({ message: "Successfully registered for the event", event: updatedEvent });
   } catch (error) {
     console.log(error);
