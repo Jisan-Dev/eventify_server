@@ -51,3 +51,24 @@ export const getEventById = async (req, res) => {
     res.status(500).json({ message: "Error fetching the event!", error: error.message });
   }
 };
+
+export const attendEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found!" });
+
+    // check if user already attending
+    if (event.attendees.includes(req.user._id)) return res.status(400).json({ message: "Already attending this event" });
+
+    // event.attendees.push(req.user._id)
+    // await event.save()
+
+    // If we need to return the updated document with response
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, { $push: { attendees: req.user._id } }, { new: true });
+
+    res.status(201).json({ message: "Successfully registered for the event", event: updatedEvent });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error registering for the event!", error: error.message });
+  }
+};
